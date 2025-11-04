@@ -56,14 +56,12 @@ The server has two endpoints and is deployed on a Linux VM using Ansible. Nginx 
 ## Folder Structure
 
 stage1_api_server/
-│
 ├── app/
-│ ├── server.py
-│ └── requirements.txt
-│
+│   ├── server.py
+│   └── requirements.txt
 └── ansible/
-├── inventory.ini
-└── playbook.yml
+    ├── inventory.ini
+    └── playbook.yml
 
 ---
 
