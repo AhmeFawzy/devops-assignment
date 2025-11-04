@@ -74,7 +74,7 @@ stage1_api_server/
 
 ```bash
 ansible-playbook -i inventory.ini playbook.yml --ask-become-pass
-
+```
 ## After running the playbook
 3. Once the playbook completes, the Flask app will be running on the VM.
 4. Open a browser or use curl to access the endpoints:
