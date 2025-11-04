@@ -2,8 +2,4 @@
 .env
 
 # Docker output folder
-../stage3_python_script_dockerfile/output/
-
-# Private keys
-*.pem
-*.key
+..\stage3_python_script_dockerfile\output\
