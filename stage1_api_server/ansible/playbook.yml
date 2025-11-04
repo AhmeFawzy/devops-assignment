@@ -1,40 +1,78 @@
 ---
-- name: Deploy Flask API Server
-  hosts: webservers
+- name: Deploy Flask App to Localhost
+  hosts: localhost
   become: yes
   tasks:
 
-    - name: Ensure Python3 and pip are installed
+    - name: Update apt packages
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+
+    - name: Install required system packages
       apt:
         name:
           - python3
           - python3-pip
+          - python3-venv
+          - git
         state: present
-        update_cache: yes
 
-    - name: Create application directory
+    - name: Ensure app directory exists
       file:
         path: /home/ahmed/app
         state: directory
-        owner: ahmed
-        group: ahmed
         mode: '0755'
 
-    - name: Copy application files
+    - name: Copy Flask app files to target directory
       copy:
         src: ../app/
         dest: /home/ahmed/app/
         owner: ahmed
-        group: ahmed
-        mode: '0755'
+        mode: '0644'
 
-    - name: Install required Python packages
-      pip:
-        requirements: /home/ahmed/app/requirements.txt
-        executable: pip3
+    - name: Create virtual environment for Flask app
+      command: python3 -m venv /home/ahmed/app/venv
+      args:
+        creates: /home/ahmed/app/venv
 
-    - name: Start Flask application
+    - name: Install required Python packages inside venv
       shell: |
-        nohup python3 /home/ahmed/app/server.py > /home/ahmed/app/server.log 2>&1 &
+        source /home/ahmed/app/venv/bin/activate && pip install --upgrade pip && pip install -r /home/ahmed/app/requirements.txt
+      args:
+        executable: /bin/bash
+
+    - name: Kill any existing Flask app process (if running)
+      shell: |
+        if pgrep -f "python3 /home/ahmed/app/server.py" > /dev/null; then
+          pkill -f "python3 /home/ahmed/app/server.py"
+        fi
+      ignore_errors: yes
+
+
+    - name: Start Flask application in background
+      shell: |
+        source /home/ahmed/app/venv/bin/activate && nohup python3 /home/ahmed/app/server.py > /home/ahmed/app/server.log 2>&1 &
       args:
         chdir: /home/ahmed/app/
+        executable: /bin/bash
+
+    - name: Wait for Flask app to start
+      wait_for:
+        port: 5000
+        delay: 3
+        timeout: 20
+
+    - name: Verify Flask app is running
+      shell: |
+        if pgrep -f "python3 /home/ahmed/app/server.py" > /dev/null; then
+          echo "✅ Flask app is running successfully!"
+          echo "Access it at: http://127.0.0.1:5000"
+        else
+          echo "❌ Flask app failed to start."
+          exit 1
+        fi
+      register: app_status
+      changed_when: false
+
+
