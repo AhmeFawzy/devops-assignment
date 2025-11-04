@@ -1,6 +1,6 @@
 import argparse
-import requests
-import paramiko
+import requests # type: ignore
+import paramiko # type: ignore
 
 # ----------------------------
 # Helper functions
