@@ -2,7 +2,7 @@
 
 ## Overview
 This project implements a simple Flask API server as Stage 1 of the DevOps assignment.  
-The server has two endpoints and is deployed on a Linux VM using Ansible. Nginx and port forwarding can be configured later to expose the server externally.
+The server has two endpoints and is deployed on a Linux VM using Ansible. Port forwarding can be configured later to expose the server externally.
 
 ---
 
