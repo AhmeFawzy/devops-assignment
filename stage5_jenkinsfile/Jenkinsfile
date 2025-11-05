@@ -1,14 +1,28 @@
 pipeline {
     agent any
     stages {
-        stage('Debug Workspace') {
+        stage('🔍 Debug Workspace') {
             steps {
-                sh 'pwd'
-                sh 'ls -la'
-                sh 'ls -la ..'
-                sh 'find .. -type d | grep -v "\.git" | sort'
+                echo '=== Current working directory ==='
+                sh '''pwd'''
+
+                echo '=== Files in current directory (should contain stage5_jenkinsfile) ==='
+                sh '''ls -la'''
+
+                echo '=== Files in parent directory (should show all stage folders) ==='
+                sh '''ls -la ..'''
+
+                echo '=== Full directory tree (excluding .git) ==='
+                sh '''find .. -type d | grep -v "/.git/" | sort'''
+
+                echo '=== Check if stage3 folder exists ==='
+                sh '''if [ -d "../stage3_python_script_dockerfile" ]; then echo "✅ FOUND: stage3_python_script_dockerfile"; else echo "❌ MISSING: stage3_python_script_dockerfile"; fi'''
             }
         }
-        // ... rest of your stages
+    }
+    post {
+        always {
+            echo 'Debugging complete.'
+        }
     }
 }
