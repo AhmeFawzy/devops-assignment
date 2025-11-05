@@ -10,6 +10,15 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                echo "Checking out code from GitHub..."
+                sshagent(['github-ssh-key']) {
+                    git branch: 'testing', url: 'git@github.com:AhmeFawzy/acronis-devops-assignment.git'
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image for Stage 3 script..."
